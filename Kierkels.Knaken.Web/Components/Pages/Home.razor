@@ -1,0 +1,39 @@
+﻿@page "/"
+@using System.Globalization
+@using Kierkels.Knaken.Application.Models
+
+<RadzenText TextStyle="TextStyle.H5">Transacties</RadzenText>
+
+<RadzenDataGrid AllowFiltering="true" GroupRowRender="OnGroupRowRender" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="400" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+    Data="@transactions" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Render="@OnRender" AllowGrouping="true">
+    <GroupHeaderTemplate>
+        @{
+            var template = context.GroupDescriptor.Title;
+            switch (context.Level)
+            {
+                case 0:
+                {
+                    var title = context.Data.Key;
+                    var date = DateTime.ParseExact(title, "yyyy-MM", null);
+                    template = char.ToUpper(date.ToString("MMMM yyyy")[0]) + date.ToString("MMMM yyyy").Substring(1);
+                    break;
+                }
+                case 1:
+                {
+                    var date = context.Data.Key;
+                    template = $"Week {CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstDay, DayOfWeek.Monday)}: {date.ToString("dddd dd MMMM", new CultureInfo("nl-NL"))}";
+                    break;
+                }
+            }
+        }
+        <strong>@template</strong>
+    </GroupHeaderTemplate>
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(TransactionDto.Description)" Title="Naam / Omschrijving" Width="300px" />
+        <RadzenDataGridColumn Property="@nameof(TransactionDto.Remarks)" Title="Mededelingen" Width="300px" />
+        <!--<RadzenDataGridColumn Property="@nameof(TransactionDto.CounterAccount)" Title="Tegenrekening" Width="200px" />-->
+        <RadzenDataGridColumn Property="@nameof(TransactionDto.MutationType)" Title="Mutatiesoort" Width="200px" />
+        <RadzenDataGridColumn Property="@nameof(TransactionDto.DebitCredit)" Title="Af Bij" Width="100px" />
+        <RadzenDataGridColumn Property="@nameof(TransactionDto.Amount)" Title="Bedrag (EUR)" FormatString="{0:C}" Width="150px" TextAlign="TextAlign.Right" />
+    </Columns>
+</RadzenDataGrid>

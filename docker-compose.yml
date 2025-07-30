@@ -1,0 +1,24 @@
+services:
+  mssql:
+    container_name: knaken-mssql
+    image: "mcr.microsoft.com/mssql/server:2025-latest"
+    ports:
+      - "1433:1433"
+    restart: always
+    volumes:
+      - mssql:/var/opt/mssql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Test123456"
+      MSSQL_PID: "Developer"
+
+  redis:
+    container_name: knaken-redis
+    image: redis:6.2
+    ports:
+      - "6379:6379"
+    restart: always
+
+volumes:
+  mssql:
+    driver: local

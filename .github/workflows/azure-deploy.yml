@@ -1,0 +1,68 @@
+﻿name: Deploy to Azure
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: knaken             # Replace with your web app name
+  AZURE_WEBAPP_ENVIRONMENT: Production  # Environment name
+  AZURE_RESOURCE_GROUP: roland-test     # Replace with your resource group name
+  DOTNET_VERSION: '9.0.x'               # Matches your .NET version
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Build and Publish
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
+          dotnet publish --configuration Release --output ./publish
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy Bicep
+        uses: Azure/bicep-deploy@v2.2.0
+        with:
+          type: 'deployment'
+          operation: 'create'
+          name: 'webapp-deployment'
+          scope: 'resourceGroup'
+          template-file: './IaC/main.bicep'
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resource-group-name: ${{ env.AZURE_RESOURCE_GROUP }}
+          parameters: |
+            webAppName: ${{ env.AZURE_WEBAPP_NAME }}
+            environmentName: ${{ env.AZURE_WEBAPP_ENVIRONMENT }}      
+      
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: '${{ env.AZURE_WEBAPP_NAME }}-${{ env.AZURE_WEBAPP_ENVIRONMENT }}'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./publish
+          
+          
+          
+          
+          
+

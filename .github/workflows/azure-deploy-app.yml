@@ -1,0 +1,40 @@
+﻿name: 🚀 Deploy Application
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'IaC/**'
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '9.0.x'
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: Production
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Build and Publish
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
+          dotnet publish --configuration Release --output ./publish
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: '${{ vars.AZURE_WEBAPP_NAME }}-${{ vars.AZURE_WEBAPP_ENVIRONMENT }}'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./publish

@@ -1,26 +1,16 @@
-﻿# This workflow handles application deployments.
-# It runs in three scenarios:
-# 1. After successful infrastructure deployments (via workflow_run trigger)
-# 2. On direct application changes (excluding IaC/** files)
-# 3. When manually triggered via workflow_dispatch
-#
-# The workflow_run trigger ensures this workflow waits for any infrastructure
-# deployments to complete successfully before running. This maintains a safe
-# deployment order where infrastructure changes are always applied first.
-
-name: 🚀 Deploy Application
+﻿name: 🚀 Deploy Application
 
 on:
-  push:
-    branches: [ "main" ]
-    paths-ignore:
-      - 'IaC/**'
+#  push:
+#    branches: [ "main" ]
+#    paths-ignore:
+#      - 'IaC/**'
   workflow_dispatch:
-  workflow_run:
-    workflows: [ "🏗 Deploy Infrastructure" ]
-    types:
-      - completed
-    branches: [ "main" ]
+#  workflow_run:
+#    workflows: [ "🏗 Deploy Infrastructure" ]
+#    types:
+#      - completed
+#    branches: [ "main" ]
 
 env:
   DOTNET_VERSION: '9.0.x'

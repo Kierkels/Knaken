@@ -5,7 +5,7 @@
 <RadzenText TextStyle="TextStyle.H5">Transacties</RadzenText>
 
 <RadzenDataGrid AllowFiltering="true" GroupRowRender="OnGroupRowRender" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="400" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-    Data="@transactions" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Render="@OnRender" AllowGrouping="true">
+    Data="@_transactions" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Render="@OnRender" AllowGrouping="true">
     <GroupHeaderTemplate>
         @{
             var template = context.GroupDescriptor.Title;

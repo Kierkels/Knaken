@@ -10,20 +10,20 @@ namespace Kierkels.Knaken.Web.Components.Pages;
 
 public partial class Home : ComponentBase
 {
-    private List<TransactionDto> transactions; // Data from the database
+    private List<TransactionDto> _transactions = []; // Data from the database
 
     // Inject the DbContext (Assume a DbContext named ApplicationDbContext is used)
     [Inject]
-    private ApplicationDbContext ApplicationDbContext { get; set; }
+    private ApplicationDbContext ApplicationDbContext { get; set; } = null!;
 
     // On initialization, fetch data from the database
     protected override async Task OnInitializedAsync()
     {
         var entities = await ApplicationDbContext.Set<TransactionEntity>().AsNoTracking().ToListAsync();
-        transactions = [];
+        _transactions = [];
         foreach (var entity in entities)
         {
-            transactions.Add(new TransactionDto()
+            _transactions.Add(new TransactionDto
             {
                 GroupIdentifier = entity.Date.ToString("yyyy-MM"),
                 Amount = entity.Amount,

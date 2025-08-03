@@ -1,21 +1,26 @@
+using Azure.Identity;
 using Kierkels.Knaken.Infrastructure;
 using Kierkels.Knaken.Infrastructure.Persistence;
-using Kierkels.Knaken.Infrastructure.Seeders;
 using Kierkels.Knaken.Web.Components;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add Key Vault configuration in non-development environments
+if (!builder.Environment.IsDevelopment())
+{
+    var keyVaultUrl = builder.Configuration["AzureKeyVault:Url"];
+    builder.Configuration.AddAzureKeyVault(
+        new Uri(keyVaultUrl!),
+        new DefaultAzureCredential());
+}
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddRadzenComponents();
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-);
-
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();

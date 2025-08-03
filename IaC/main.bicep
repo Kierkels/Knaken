@@ -90,7 +90,7 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2022-05-01-preview' = {
 // Store Connection String in Key Vault
 resource connectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
   parent: keyVault
-  name: 'ConnectionString'
+  name: 'ConnectionStrings--DbConnection'
   properties: {
     contentType: 'text/plain'
     value: 'Server=tcp:${sqlServer.name}${environment().suffixes.sqlServerHostname},1433;Database=${sqlDatabase.name};Authentication=Active Directory Default;Encrypt=true;'

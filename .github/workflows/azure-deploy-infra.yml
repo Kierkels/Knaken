@@ -1,4 +1,13 @@
-﻿name: 🏗️ Deploy Infrastructure
+﻿# This workflow handles infrastructure deployments.
+# It runs:
+# 1. On direct changes to IaC/** files
+# 2. When manually triggered via workflow_dispatch
+#
+# When this workflow completes successfully, it automatically triggers the deploy-app.yml workflow
+# due to the workflow_run trigger configured there. This ensures infrastructure changes are always
+# deployed before any application deployment starts.
+
+name: 🏗️ Deploy Infrastructure
 
 on:
   push:

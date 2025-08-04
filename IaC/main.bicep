@@ -154,13 +154,50 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
             value: keyVault.properties.vaultUri
           }
         ]
+      // Add logging
+      detailedErrorLogging: true
+      httpLogging: {
+        fileSystem: {
+          enabled: true
+          retentionInDays: 7
+          retentionInMb: 35
+        }
+      }
+      logsDirectorySizeLimit: 35  
     }
   }
 }
 
-output appName string = webApp.name
-output appUrl string = 'https://${webApp.properties.defaultHostName}'
-output appInsightsInstrumentationKey string = appInsights.properties.InstrumentationKey
-output appInsightsConnectionString string = appInsights.properties.ConnectionString
-output sqlServerName string = sqlServer.name
-output sqlDatabaseName string = sqlDatabase.name
+// Add logging configuration
+resource webAppLogs 'Microsoft.Web/sites/config@2022-09-01' = {
+  parent: webApp
+  name: 'logs'
+  properties: {
+    applicationLogs: {
+      fileSystem: {
+        level: 'Verbose'
+      }
+    }
+    detailedErrorMessages: {
+      enabled: true
+    }
+    failedRequestsTracing: {
+      enabled: true
+    }
+    httpLogs: {
+      fileSystem: {
+        enabled: true
+        retentionInDays: 7
+        retentionInMb: 35
+      }
+    }
+  }
+}
+
+
+// output appName string = webApp.name
+// output appUrl string = 'https://${webApp.properties.defaultHostName}'
+// output appInsightsInstrumentationKey string = appInsights.properties.InstrumentationKey
+// output appInsightsConnectionString string = appInsights.properties.ConnectionString
+// output sqlServerName string = sqlServer.name
+// output sqlDatabaseName string = sqlDatabase.name

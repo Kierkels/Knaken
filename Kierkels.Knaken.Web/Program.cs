@@ -2,6 +2,7 @@ using Azure.Identity;
 using Kierkels.Knaken.Infrastructure;
 using Kierkels.Knaken.Infrastructure.Persistence;
 using Kierkels.Knaken.Web.Components;
+using Microsoft.ApplicationInsights.DependencyCollector;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 
@@ -22,6 +23,10 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddRadzenComponents();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Add Application Insights
+builder.Services.AddApplicationInsightsTelemetry();
+builder.Services.ConfigureTelemetryModule<DependencyTrackingTelemetryModule>((module, _) => { module.EnableSqlCommandTextInstrumentation = true; });
 
 var app = builder.Build();
 

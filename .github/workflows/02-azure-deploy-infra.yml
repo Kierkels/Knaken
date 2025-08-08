@@ -1,4 +1,4 @@
-﻿name: 👀 Review Infrastructure
+﻿name: 🏗️ Deploy Infrastructure
 
 on:
   workflow_dispatch:

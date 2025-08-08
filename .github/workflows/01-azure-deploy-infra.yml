@@ -12,6 +12,8 @@ jobs:
   what-if:
     runs-on: ubuntu-latest
     environment: Production
+    outputs:
+      whatif-result: ${{ steps.whatif.outputs.whatIfResult }}
     steps:
       - uses: actions/checkout@v4
 
@@ -23,6 +25,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: What-If Bicep Deployment
+        id: whatif
         uses: Azure/bicep-deploy@v2.2.0
         with:
           type: 'deployment'
@@ -52,14 +55,19 @@ jobs:
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.TOKEN }}
-          approvers: ${{ vars.INFRASTRUCTURE_APPROVERS }}  # Define this in repository variables
+          approvers: ${{ vars.INFRASTRUCTURE_APPROVERS }}
           minimum-approvals: 1
           issue-title: "Manual Approval Required for Infrastructure Deployment"
           issue-body: |
-            Please review the what-if results in the previous job and approve or deny the deployment.
+            Please review the what-if results below and approve or deny the deployment.
+            
+            # What-If Analysis Results
+            ```
+            ${{ needs.what-if.outputs.whatif-result }}
+            ```
             
             This will deploy infrastructure changes to Production.
-
+  
   deploy-infrastructure:
     needs: manual-approval
     runs-on: ubuntu-latest

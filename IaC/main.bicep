@@ -150,7 +150,7 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
             value: '~3'
           }
           {
-            name: 'KeyVaultUri'
+            name: 'AzureKeyVault:Url'
             value: keyVault.properties.vaultUri
           }
         ]

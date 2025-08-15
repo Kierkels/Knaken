@@ -128,45 +128,40 @@ resource keyVaultRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04
 resource webApp 'Microsoft.Web/sites@2022-09-01' = {
   name: '${webAppName}-${environmentName}'
   location: location
-  properties: {
-    identity: {
-        type: 'UserAssigned'
-        userAssignedIdentities: {
-          '${webAppIdentity.id}': {}
-        }
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${webAppIdentity.id}': {}
     }
+  }
+  properties: {
     serverFarmId: appServicePlan.id
     httpsOnly: true
     siteConfig: {
       netFrameworkVersion: 'v9.0'
       windowsFxVersion: 'DOTNETCORE|9.0'
       appSettings: [
-          {
-            name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-            value: appInsights.properties.ConnectionString
-          }
-          {
-            name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
-            value: '~3'
-          }
-          {
-            name: 'AzureKeyVault:Url'
-            value: keyVault.properties.vaultUri
-          }
-        ]
-      // Add logging
-      detailedErrorLogging: true
-      httpLogging: {
-        fileSystem: {
-          enabled: true
-          retentionInDays: 7
-          retentionInMb: 35
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsights.properties.ConnectionString
         }
-      }
+        {
+          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
+          value: '~3'
+        }
+        {
+          name: 'AzureKeyVault:Url'
+          value: keyVault.properties.vaultUri
+        }
+      ]
+      // Add logging
+      detailedErrorLoggingEnabled: true
+      httpLoggingEnabled: true
       logsDirectorySizeLimit: 35  
     }
   }
 }
+
 
 // Add logging configuration
 resource webAppLogs 'Microsoft.Web/sites/config@2022-09-01' = {

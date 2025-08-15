@@ -1,7 +1,14 @@
 ﻿name: 🏗️ Deploy Infrastructure
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger
+  push:
+    paths:
+      - 'IaC/**/*.bicep'    # Any Bicep file changes in IaC folder
+      - '.github/workflows/**/*.yml'  # Any workflow file changes
+    branches:
+      - main  # Assuming your main branch is called "main"
+
 
 permissions:
   id-token: write
@@ -39,6 +46,7 @@ jobs:
             sqlAdminPassword: ${{ secrets.SQL_ADMIN_PASSWORD }}
             
   deploy-infrastructure:
+    needs: what-if
     runs-on: ubuntu-latest
     environment: Production
     steps:

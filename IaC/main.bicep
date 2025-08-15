@@ -174,7 +174,7 @@ resource webAppLogs 'Microsoft.Web/sites/config@2022-09-01' = {
       }
     }
     detailedErrorMessages: {
-      enabled: true
+      enabled: false
     }
     failedRequestsTracing: {
       enabled: true
@@ -189,10 +189,3 @@ resource webAppLogs 'Microsoft.Web/sites/config@2022-09-01' = {
   }
 }
 
-
-// output appName string = webApp.name
-// output appUrl string = 'https://${webApp.properties.defaultHostName}'
-// output appInsightsInstrumentationKey string = appInsights.properties.InstrumentationKey
-// output appInsightsConnectionString string = appInsights.properties.ConnectionString
-// output sqlServerName string = sqlServer.name
-// output sqlDatabaseName string = sqlDatabase.name
